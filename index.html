@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <script src="dexie.js"></script>
+
+  <script>
+
+    function ready() {
+
+      const db = new Dexie('staffrecords');
+
+      db.version(1).stores({
+        people: '++id,name', // make a table called "people" with a primary key "id" and a column 'name' which is indexed
+        pets: '++id,name,breed,idPeople'
+      });
+
+      addPerson = (name, address) => {
+        db.people.put({  // add the object following to the table "people"
+          name: name,
+          address: address // add a column "address" to the table "people"
+        }).then(value => console.log(`Id of the people put is: ${value}`))
+      }
+
+      // addPerson("Polly", "51 The Bronx")
+      // addPerson("Percy", "31 The Bronx")
+      // addPerson("Paul", "66 The Bronx")
+      // addPerson("Ryan", "77 The Bronx")
+
+
+      getRecordById = (id) => {
+        db.people.get(id).then((value) => { //value is the object which is the record
+          console.log(value)
+        })
+      }
+
+      getRecordById(3)  // "paul" has id 3
+
+      getRecordByName = (name) => {
+        db.people.where("name").equals(name).toArray((array) => makeList(array))
+      }
+      getRecordByName("Polly")
+
+      makeList = (array) => {  //make a list from an array
+        console.log("LIST")
+        for (a of array) {
+          console.log(a)
+        }
+      }
+
+      getRecordsBySearchString = (string) => {
+        db.people
+          .where("name")
+          .startsWithAnyOfIgnoreCase(string)
+          .toArray(array => makeList(array))
+      }
+
+      getRecordsBySearchString("p")
+
+      addPetsById = (newPetName, newBreed, id) => {
+        db.pets.put({
+          name: newPetName,
+          breed: newBreed,
+          idPeople: id
+        }).then(value => console.log(`The id of the added pet is: ${value}`))
+      }
+
+      //addPetsById("dolly", "sheep", 3)
+      // addPetsById("gilly", "dog", 1)
+      // addPetsById("puss", "cat", 2)
+      // addPetsById("cheep", "bird", 2)
+
+
+      getPetsByPeopleId = (id) => {  //links two tables though an id field
+        db.pets
+          .where("idPeople")
+          .equals(id)
+          .toArray(array => makeList(array))
+      }
+      
+      getPetsByPeopleId(2)
+
+
+
+
+    } //end of ready()
+
+    if (document.readyState == 'loading') {
+      document.addEventListener('DOMContentLoaded', ready);
+    } else {
+      ready();
+    }
+  </script>
+
+</head>
+
+<body>
+  <input id="name" />
+  <button id="addThing" class="button">a button</button>
+
+
+</body>
+
+</html>
