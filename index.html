@@ -6,7 +6,6 @@
   <script src="dexie.js"></script>
 
   <script>
-
     function ready() {
 
       const db = new Dexie('staffrecords');
@@ -63,25 +62,24 @@
           name: newPetName,
           breed: newBreed,
           idPeople: id
-        }).then(value => console.log(`The id of the added pet is: ${value}`))
+        }).then(value => document.getElementById("list").innerHTML = `The id of the added pet is: ${value}`)
       }
 
       getPetsById = (id) => {
         db.pets
-        .where("idPeople")
-        .equals(id)
-        .toArray(array => makeList(array))
+          .where("idPeople")
+          .equals(id)
+          .toArray(array => makeList(array))
       }
 
       deletePetById = (id) => {
         db.pets
-          .where("idPeople")
-          .equals(id)
+          .where("id")
+          .equals(parseInt(id))
           .delete()
-          .then(value=>  document.getElementById("list").innerHTML=`deleted pet with id ${value}`)
+          .then(value => document.getElementById("list").innerHTML = `deleted pet with id ${value}`)
       }
 
-      //getPetsByPeopleId(2)
 
       document.getElementById("addPeopleById").addEventListener('click', () => {
         addPerson(
@@ -123,7 +121,6 @@
     } else {
       ready();
     }
-
   </script>
 
 </head>
@@ -164,8 +161,8 @@
   <br />
   <br />
   DELETE A PET BY ID
-  <br/>
-  <br/>
+  <br />
+  <br />
   <label for="petId">Pet's id: </label>
   <input id="petId" />
   <br />
