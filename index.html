@@ -6,7 +6,6 @@
   <script src="dexie.js"></script>
 
   <script>
-
     function ready() {
 
       const db = new Dexie('staffrecords');
@@ -17,7 +16,7 @@
       });
 
       addPerson = (name, address) => {
-        db.people.put({  // add the object following to the table "people"
+        db.people.put({ // add the object following to the table "people"
           name: name,
           address: address // add a column "address" to the table "people"
         }).then(value => console.log(`Id of the people put is: ${value}`))
@@ -35,14 +34,14 @@
         })
       }
 
-      getRecordById(3)  // "paul" has id 3
+      getRecordById(3) // "paul" has id 3
 
       getRecordByName = (name) => {
         db.people.where("name").equals(name).toArray((array) => makeList(array))
       }
       getRecordByName("Polly")
 
-      makeList = (array) => {  //make a list from an array
+      makeList = (array) => { //make a list from an array
         console.log("LIST")
         for (a of array) {
           console.log(a)
@@ -59,6 +58,7 @@
       getRecordsBySearchString("p")
 
       addPetsById = (newPetName, newBreed, id) => {
+        alert ("hr")
         db.pets.put({
           name: newPetName,
           breed: newBreed,
@@ -66,25 +66,23 @@
         }).then(value => console.log(`The id of the added pet is: ${value}`))
       }
 
-      addPetsById(
-        document.getElementById("petName").innerHTML,
-        document.getElementById("breed").innerHTML, 
-        document.getElementById("peopleId").innerHTML
-      )
-
-
-
-      getPetsByPeopleId = (id) => {  //links two tables though an id field
+      getPetsByPeopleId = (id) => { //links two tables though an id field
         db.pets
           .where("idPeople")
           .equals(id)
           .toArray(array => makeList(array))
       }
-      
+
       getPetsByPeopleId(2)
 
 
-
+      document.getElementById("addPetsById").addEventListener('click', () => {
+        addPetsById(
+          document.getElementById("petName").value,
+          document.getElementById("breed").value,
+          document.getElementById("peopleId").value
+        )
+      })
 
     } //end of ready()
 
@@ -99,7 +97,7 @@
 
 <body>
   <input id="petName" /><input id="breed" /><input id="peopleId" />
-  
+
   <button id="addPetsById" class="button">add pet</button>
 
 
