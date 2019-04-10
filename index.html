@@ -66,10 +66,12 @@
         }).then(value => console.log(`The id of the added pet is: ${value}`))
       }
 
-      //addPetsById("dolly", "sheep", 3)
-      // addPetsById("gilly", "dog", 1)
-      // addPetsById("puss", "cat", 2)
-      // addPetsById("cheep", "bird", 2)
+      addPetsById(
+        document.getElementById("petName").innerHTML,
+        document.getElementById("breed").innerHTML, 
+        document.getElementById("peopleId").innerHTML
+      )
+
 
 
       getPetsByPeopleId = (id) => {  //links two tables though an id field
@@ -96,8 +98,9 @@
 </head>
 
 <body>
-  <input id="name" />
-  <button id="addThing" class="button">a button</button>
+  <input id="petName" /><input id="breed" /><input id="peopleId" />
+  
+  <button id="addPetsById" class="button">add pet</button>
 
 
 </body>
