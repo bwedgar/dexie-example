@@ -6,6 +6,7 @@
   <script src="dexie.js"></script>
 
   <script>
+
     function ready() {
 
       const db = new Dexie('staffrecords');
@@ -19,13 +20,10 @@
         db.people.put({ // add the object following to the table "people"
           name: name,
           address: address // add a column "address" to the table "people"
-        }).then(value => console.log(`Id of the people put is: ${value}`))
+        }).then(value => {
+          document.getElementById("list").innerHTML = `Id of the people added is: ${value}`
+        })
       }
-
-      // addPerson("Polly", "51 The Bronx")
-      // addPerson("Percy", "31 The Bronx")
-      // addPerson("Paul", "66 The Bronx")
-      // addPerson("Ryan", "77 The Bronx")
 
 
       getRecordById = (id) => {
@@ -34,17 +32,20 @@
         })
       }
 
-      getRecordById(3) // "paul" has id 3
+      //getRecordById(3) // "paul" has id 3
 
       getRecordByName = (name) => {
         db.people.where("name").equals(name).toArray((array) => makeList(array))
       }
-      getRecordByName("Polly")
+      //getRecordByName("Polly")
 
       makeList = (array) => { //make a list from an array
-        console.log("LIST")
+        document.getElementById("list").innerHTML = ""
         for (a of array) {
-          console.log(a)
+          for ([i, v] of Object.entries(a)) { //for each object a of array change the object to an array
+            document.getElementById("list").innerHTML += v + ", " //print the value
+          }
+          document.getElementById("list").innerHTML += "<br/>"
         }
       }
 
@@ -58,7 +59,6 @@
       getRecordsBySearchString("p")
 
       addPetsById = (newPetName, newBreed, id) => {
-        alert ("hr")
         db.pets.put({
           name: newPetName,
           breed: newBreed,
@@ -66,15 +66,29 @@
         }).then(value => console.log(`The id of the added pet is: ${value}`))
       }
 
-      getPetsByPeopleId = (id) => { //links two tables though an id field
+      getPetsById = (id) => {
+        db.pets
+        .where("idPeople")
+        .equals(id)
+        .toArray(array => makeList(array))
+      }
+
+      deletePetById = (id) => {
         db.pets
           .where("idPeople")
           .equals(id)
-          .toArray(array => makeList(array))
+          .delete()
+          .then(value=>  document.getElementById("list").innerHTML=`deleted pet with id ${value}`)
       }
 
-      getPetsByPeopleId(2)
+      //getPetsByPeopleId(2)
 
+      document.getElementById("addPeopleById").addEventListener('click', () => {
+        addPerson(
+          document.getElementById("personName").value,
+          document.getElementById("address").value
+        )
+      })
 
       document.getElementById("addPetsById").addEventListener('click', () => {
         addPetsById(
@@ -84,22 +98,92 @@
         )
       })
 
+      document.getElementById("startName").addEventListener('keyup', () => {
+        getRecordsBySearchString(
+          document.getElementById("startName").value
+        )
+      })
+
+      document.getElementById("getPetsByPeopleId").addEventListener('click', () => {
+        getPetsById(
+          document.getElementById("personId").value
+        )
+      })
+
+      document.getElementById("deletePetById").addEventListener('click', () => {
+        deletePetById(
+          document.getElementById("petId").value
+        )
+      })
+
     } //end of ready()
 
-    if (document.readyState == 'loading') {
+    if (document.readyState == 'loading') { //only run the javascript when the html is loaded
       document.addEventListener('DOMContentLoaded', ready);
     } else {
       ready();
     }
+
   </script>
 
 </head>
 
 <body>
-  <input id="petName" /><input id="breed" /><input id="peopleId" />
-
+  ENTER PEOPLE
+  <br />
+  <br />
+  <label for="personName">person's name: </label>
+  <input id="personName" />
+  <br />
+  <label for="address">address: </label>
+  <input id="address" />
+  <br />
+  <button id="addPeopleById" class="button">add person</button>
+  <br />
+  <br />
+  ENTER PETS
+  <br />
+  <br />
+  <label for="petName">pet's name: </label>
+  <input id="petName" />
+  <br />
+  <label for="breed">breed: </label>
+  <input id="breed" />
+  <br />
+  <label for="peopleId">Owners id: </label>
+  <input id="peopleId" />
+  <br />
   <button id="addPetsById" class="button">add pet</button>
-
+  <br />
+  <br />
+  LIST PEOPLE
+  <br />
+  <br />
+  <label for="startName">Owners name: </label>
+  <input id="startName" />
+  <br />
+  <br />
+  DELETE A PET BY ID
+  <br/>
+  <br/>
+  <label for="petId">Pet's id: </label>
+  <input id="petId" />
+  <br />
+  <button id="deletePetById" class="button">delete pet</button>
+  <br />
+  <br />
+  LIST PETS FOR A PERSON
+  <br />
+  <br />
+  <label for="personId">Owners ID: </label>
+  <input id="personId" />
+  <br />
+  <button id="getPetsByPeopleId" class="button">list pets</button>
+  <br />
+  <br />
+  RESULTS
+  <br />
+  <div id="list"></div>
 
 </body>
 
